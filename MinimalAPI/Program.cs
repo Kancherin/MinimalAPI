@@ -1,15 +1,33 @@
+using Microsoft.AspNetCore.Cors;
 using MinimalAPI.Entidades;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var origenesPermitidos = builder.Configuration.GetValue<string>("origenespermitidos")!;
 
 //Servicios
+builder.Services.AddCors(opciones =>
+{
+    opciones.AddDefaultPolicy(configuracion =>
+    {
+        configuracion.WithOrigins(origenesPermitidos).AllowAnyHeader().AllowAnyMethod();
+    });
+
+    opciones.AddPolicy("libre", configuracion =>
+    {
+        configuracion.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+builder.Services.AddOutputCache();
 
 //Fin
+
 var app = builder.Build();
 
 //Middleware
-app.MapGet("/", () => "Hello World!");
+
+app.UseCors();
+app.UseOutputCache();
+app.MapGet("/", [EnableCors(policyName: "libre")]() => "Hello World!");
 app.MapGet("/generos", () => 
 {
     var generos = new List<Genero>
@@ -20,8 +38,8 @@ app.MapGet("/generos", () =>
     };
 
     return generos;
-});
-
+}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
 
 //Fin
+
 app.Run();
