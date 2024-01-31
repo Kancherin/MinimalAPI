@@ -18,12 +18,21 @@ builder.Services.AddCors(opciones =>
     });
 });
 builder.Services.AddOutputCache();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //Fin
 
 var app = builder.Build();
 
 //Middleware
+//if (builder.Environment.IsDevelopment())
+//{
+
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors();
 app.UseOutputCache();
