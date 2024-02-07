@@ -1,4 +1,6 @@
-﻿namespace MinimalAPI.Entidades
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MinimalAPI.Entidades
 {
     public class Genero
     {
